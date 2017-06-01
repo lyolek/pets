@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html ng-app="store">
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<script src= "angularjs/1.3.15/angular.min.js"></script>
+<script src= "app.js"></script>
+<script src= "jquery/jquery-2.1.4.min.js"></script>
+<script src= "jquery/jquery.mask.min.js"></script>
+<script src= "bootstrap/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap/bootstrap-3.3.4-dist/css/bootstrap.min.css">
+
+
+
+
+<body>
+
+
+
+<div ng-controller="LoginCtrl">
+  <div ng-show="isLogged" ng-controller="NavPanelController as panel">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="#">{{clientName}}</a>
+	</div>
+
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	  <ul class="nav navbar-nav">
+	    <li ng-class="{ active:panel.isSelected(1) }"><a ng-click="panel.selectTab(1)" href="#">Клиенты</a></li>
+	    <li ng-class="{ active:panel.isSelected(2) }"><a ng-click="panel.selectTab(2)" href="#">Пациенты</a></li>
+	  </ul>
+	  <ul class="nav navbar-nav navbar-right">
+	    <li><a href="#" ng-click="clickToLogout()">Выход</a></li>
+	  </ul>
+	</div>
+      </div>
+    </nav>
+    
+    <!--Клиенты-->
+    <div class="panel panel-default" ng-show="panel.isSelected(1)" ng-controller="ClientController">
+    
+      <div class="panel-heading">
+	<div class="row">
+	  <div class="col-sm-1"></div>
+	  <div class="form-inline col-sm-9">
+	    <form role="search" class="form-inline col-sm-10" ng-submit="submitSearch()">
+	      <div class="form-group">
+		<input type="text" class="form-control" ng-model="clientSearch.param" placeholder="ФИО" ng-click="setMode('search')">
+		<input type="text" class="form-control form-phone" ng-model="clientSearch.phone" placeholder="Телефон" ng-click="setMode('search')">
+	      </div>
+	      <button type="submit" class="btn btn-default">Искать</button>
+	    </form>
+	  </div>
+	  <div class="form-inline col-sm-1">
+	    <button class="btn btn-default" ng-click="setMode('add')">Новый</button>
+	  </div>
+	  <div class="col-sm-1"></div>
+	</div>
+      </div>
+      
+      <div class="panel-body">
+	
+	<!--Поиск Клиента-->
+	<div ng-show="isSelected('search')">
+	  
+	  <table class="table table-striped table-hover">
+	    <thead>
+	      <tr>
+		<th>Имя</th>
+		<th>Фамилия</th>
+		<th>Телефон</th>
+		<th></th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr ng-repeat="clientInRow in clientsFound">
+		<td>{{clientInRow.firstName}}</td>
+		<td>{{clientInRow.lastName}}</td>
+		<td>{{clientInRow.phone1}} {{clientInRow.phone2}} {{clientInRow.phone3}} </td>
+		<td><a href="#" ng-click="showClientCard(clientInRow.id)"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></a></td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+	
+	
+	<!--Карточка Клиента-->
+	<div ng-show="isSelected('clientCard')">
+	<a href="#" ng-click="editClientCard(clientID)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+	  {{clientFirstName}}<br>
+	  {{clientPhone}}
+	</div>
+	
+	<!--Добавление Клиента-->
+	<div ng-show="isSelected('add')">
+	  <form class="form-horizontal" ng-submit="submitClient()" name="saveClient">
+	    <div class="form-group">
+	      <label for="clientFirstName" class="col-sm-2 control-label">Имя</label>
+	      <div class="col-sm-10">
+		<input type="text" class="form-control" id="clientFirstName" placeholder="Имя" ng-model="saveClient.firstName">
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <label for="clientLastName" class="col-sm-2 control-label">Фамилия</label>
+	      <div class="col-sm-10">
+		<input type="text" class="form-control" id="clientLastName" placeholder="Фамилия" ng-model="saveClient.lastName">
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <label for="clientPhone1" class="col-sm-2 control-label">Телефон</label>
+	      <div class="col-sm-10">
+		<input type="text" class="form-control form-phone" id="clientPhone1" placeholder="Телефон1" ng-model="saveClient.phone1"/>
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <label for="clientPhone2" class="col-sm-2 control-label">Телефон</label>
+	      <div class="col-sm-10">
+		<input type="text" class="form-control form-phone" id="clientPhone2" placeholder="Телефон2" ng-model="saveClient.phone2"/>
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <label for="clientPhone3" class="col-sm-2 control-label">Телефон</label>
+	      <div class="col-sm-10">
+		<input type="text" class="form-control form-phone" id="clientPhone3" placeholder="Телефон3" ng-model="saveClient.phone3"/>
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <div class="col-sm-offset-2 col-sm-10">
+		<button type="submit" class="btn btn-default">Сохранить</button>
+		<button type="reset" class="btn btn-default">Очистить</button>
+	      </div>
+	    </div>
+	  </form>
+	</div>
+	
+      </div>
+    </div>
+
+    <div class="panel" ng-show="panel.isSelected(2)">
+      Пациенты пока в работе
+    </div>
+  </div>
+
+  <div class="panel panel-default" ng-show="!isLogged">
+    <div class="panel-body">
+	  <form class="form-horizontal" ng-submit="clickToDoLogin()">
+	    <div class="form-group">
+	      <label for="inputName" class="col-sm-2 control-label">Логин</label>
+	      <div class="col-sm-8">
+		<input type="text" class="form-control" id="inputLogin" ng-model="inputLogin">
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <label for="inputPassword" class="col-sm-2 control-label">Пароль</label>
+	      <div class="col-sm-8">
+		<input type="password" class="form-control" id="inputPassword" ng-model="inputPassword">
+	      </div>
+	    </div>
+	    <div class="form-group">
+	      <div class="col-sm-offset-2 col-sm-10">
+		<button class="btn btn-default">Вход</button>
+	      </div>
+	    </div>
+	  </form>
+    </div>
+  <div>
+
+</div>
+
+
+</body>
+</html>
